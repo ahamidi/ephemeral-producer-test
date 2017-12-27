@@ -1,0 +1,2 @@
+:repo:deb [arch=amd64] http://packages.confluent.io/deb/3.3 stable main
+librdkafka-dev=0.11.0~1confluent3.3.0-1
