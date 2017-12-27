@@ -28,3 +28,9 @@
 [[constraint]]
   branch = "master"
   name = "github.com/joeshaw/envdecode"
+
+[metadata.heroku]
+  root-package = "github.com/ahamidi/ephemeral-producer-test"
+  go-version = "go1.9"
+  install = ["."]
+  ensure = "false"
