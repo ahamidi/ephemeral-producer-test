@@ -39,10 +39,16 @@ func main() {
 		CACert:        env.TrustedCert,
 	}
 
+	count := 0
+
 	for {
 		err := createProduceDestroy(testTopic, env.Brokers, creds)
 		if err != nil {
 			log.Fatal(err)
+		}
+		count++
+		if count%1000 == 0 {
+			log.Println("Count:", count)
 		}
 	}
 
