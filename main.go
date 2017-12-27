@@ -12,9 +12,10 @@ type Env struct {
 	Host          string `env:"HOST"`
 	Port          string `env:"PORT,required"`
 	Brokers       string `env:"KAFKA_URL,required"`
-	ClientCert    string `env:"KAFKA_CLIENT_CERT"`
-	ClientCertKey string `env:"KAFKA_CLIENT_CERT_KEY"`
-	TrustedCert   string `env:"KAFKA_TRUSTED_CERT"`
+	ClientCert    string `env:"KAFKA_CLIENT_CERT,required"`
+	ClientCertKey string `env:"KAFKA_CLIENT_CERT_KEY,required"`
+	TrustedCert   string `env:"KAFKA_TRUSTED_CERT,required"`
+	Concurrency   int    `env:"CONCURRENCY,default=10"`
 }
 
 type AppConfig struct {
@@ -39,17 +40,24 @@ func main() {
 		CACert:        env.TrustedCert,
 	}
 
-	count := 0
-
-	for {
-		err := createProduceDestroy(testTopic, env.Brokers, creds)
-		if err != nil {
-			log.Fatal(err)
-		}
-		count++
-		if count%1000 == 0 {
-			log.Println("Count:", count)
-		}
+	err := creds.writeCertsToFile()
+	if err != nil {
+		log.Fatal("Unable to write certs to file system:", err)
 	}
+
+	for i := 0; i < env.Concurrency; i++ {
+		log.Printf("Starting worker %d", i)
+		go func() {
+			for {
+				err := createProduceDestroy(testTopic, env.Brokers, creds)
+				if err != nil {
+					log.Fatal(err)
+				}
+			}
+		}()
+	}
+
+	done := make(chan bool)
+	<-done
 
 }

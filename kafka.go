@@ -38,10 +38,10 @@ func NewProducer(brokers string, creds *Credentials) (*Producer, error) {
 	// Check to see if broker has SSL certs, if so write them out to disk and
 	// set paths in librdkafka configMap
 	if creds != nil {
-		err := creds.writeCertsToFile()
-		if err != nil {
-			return nil, err
-		}
+		//err := creds.writeCertsToFile()
+		//if err != nil {
+		//return nil, err
+		//}
 
 		configMap.SetKey("ssl.key.location", creds.clientCertKeyFilePath())
 		configMap.SetKey("ssl.certificate.location", creds.clientCertFilePath())
